@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetSync</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            color: #a2a2a2;
+            animation: fadeIn 2s ease-in-out, colorChange 5s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes colorChange {
+            0% { color: #49b600; }
+            100% { color: #a0a0a0; }
+        }
+
+        .event {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .event:hover {
+            transform: scale(1.02);
+        }
+
+        .event-title {
+            font-size: 1.2em;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .event-content {
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            table-layout: fixed;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: 200;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        tbody tr:hover {
+            background-color: #e6ffe6;
+        }
+
+        .analytics-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px auto;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .analytics-button:hover {
+            background-color: #45a049;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        /* Responsive grid layout */
+        #events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+            .intro-text {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            line-height: 1.6;
+            font-size: 1.1em;
+            color: #555;
+        }
+    </style>
+    <script>
+        async function fetchOdds() {
+            return fetch('/odds')
+                .then(response => response.json())
+                .catch(error => {
+                    console.error('Failed to load odds:', error);
+                    document.getElementById('events-container').textContent = 'Failed to load odds.';
+                });
+        }
+
+        async function fetchEvents() {
+            return fetch('/events')
+                .then(response => response.json())
+                .catch(error => {
+                    console.error('Failed to load events:', error);
+                    document.getElementById('events-container').textContent = 'Failed to load events.';
+                });
+        }
+
+        function renderEvents(events, oddsData) {
+            const eventsContainer = document.getElementById('events-container');
+            eventsContainer.innerHTML = '';
+
+            if (!events || !oddsData) {
+                eventsContainer.textContent = 'Failed to load events or odds data.';
+                return;
+            }
+
+            events.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event');
+
+                const eventTitle = document.createElement('div');
+                eventTitle.classList.add('event-title');
+                eventTitle.textContent = `${event.home_team} vs ${event.away_team} - ${new Date(event.commence_time).toLocaleString()}`;
+                eventDiv.appendChild(eventTitle);
+
+                const eventContent = document.createElement('div');
+                eventContent.classList.add('event-content');
+
+                // Create a table for odds
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>Bookmaker</th>
+                        <th>Home Win</th>
+                        <th>Draw</th>
+                        <th>Away Win</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+
+                const tbody = document.createElement('tbody');
+                const matchingOdds = oddsData.find(oddsEvent => oddsEvent.home_team === event.home_team && oddsEvent.away_team === event.away_team);
+                if (matchingOdds && matchingOdds.bookmakers) {
+                    matchingOdds.bookmakers.forEach(bookmaker => {
+                        bookmaker.markets.forEach(market => {
+                            if (market.key === 'h2h') {
+                                const tr = document.createElement('tr');
+
+                                const homeOdds = market.outcomes.find(outcome => outcome.name === event.home_team)?.price || '-';
+                                const drawOdds = market.outcomes.find(outcome => outcome.name === 'Draw')?.price || '-';
+                                const awayOdds = market.outcomes.find(outcome => outcome.name === event.away_team)?.price || '-';
+
+                                tr.innerHTML = `
+                                    <td>${bookmaker.title}</td>
+                                    <td>${homeOdds}</td>
+                                    <td>${drawOdds}</td>
+                                    <td>${awayOdds}</td>
+                                `;
+                                tbody.appendChild(tr);
+                            }
+                        });
+                    });
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4">No odds available for this event</td></tr>`;
+                }
+                table.appendChild(tbody);
+                eventContent.appendChild(table);
+
+                // Add totals section
+                const totalsSection = document.createElement('div');
+                totalsSection.innerHTML = `<h4>Totals</h4>`;
+                const totalsTable = document.createElement('table');
+                const totalsThead = document.createElement('thead');
+                totalsThead.innerHTML = `
+                    <tr>
+                        <th>Bookmaker</th>
+                        <th>Over</th>
+                        <th>Under</th>
+                    </tr>
+                `;
+                totalsTable.appendChild(totalsThead);
+
+                const totalsTbody = document.createElement('tbody');
+                if (matchingOdds && matchingOdds.bookmakers) {
+                    matchingOdds.bookmakers.forEach(bookmaker => {
+                        bookmaker.markets.forEach(market => {
+                            if (market.key === 'totals') {
+                                const overOdds = market.outcomes.find(outcome => outcome.name === 'Over')?.price || '-';
+                                const underOdds = market.outcomes.find(outcome => outcome.name === 'Under')?.price || '-';
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
+                                    <td>${bookmaker.title}</td>
+                                    <td>${overOdds}</td>
+                                    <td>${underOdds}</td>
+                                `;
+                                totalsTbody.appendChild(tr);
+                            }
+                        });
+                    });
+                }
+                totalsTable.appendChild(totalsTbody);
+                totalsSection.appendChild(totalsTable);
+                eventContent.appendChild(totalsSection);
+
+                // Add spreads section
+                const spreadsSection = document.createElement('div');
+                spreadsSection.innerHTML = `<h4>Spreads</h4>`;
+                const spreadsTable = document.createElement('table');
+                const spreadsThead = document.createElement('thead');
+                spreadsThead.innerHTML = `
+                    <tr>
+                        <th>Bookmaker</th>
+                        <th>Team</th>
+                        <th>Price</th>
+                        <th>Point</th>
+                    </tr>
+                `;
+                spreadsTable.appendChild(spreadsThead);
+
+                const spreadsTbody = document.createElement('tbody');
+                if (matchingOdds && matchingOdds.bookmakers) {
+                    matchingOdds.bookmakers.forEach(bookmaker => {
+                        bookmaker.markets.forEach(market => {
+                            if (market.key === 'spreads') {
+                                market.outcomes.forEach(outcome => {
+                                    const tr = document.createElement('tr');
+                                    tr.innerHTML = `
+                                        <td>${bookmaker.title}</td>
+                                        <td>${outcome.name}</td>
+                                        <td>${outcome.price}</td>
+                                        <td>${outcome.point}</td>
+                                    `;
+                                    spreadsTbody.appendChild(tr);
+                                });
+                            }
+                        });
+                    });
+                }
+                spreadsTable.appendChild(spreadsTbody);
+                spreadsSection.appendChild(spreadsTable);
+                eventContent.appendChild(spreadsSection);
+
+                eventDiv.appendChild(eventContent);
+                eventsContainer.appendChild(eventDiv);
+            });
+        }
+
+        async function loadData() {
+            try {
+                const [events, oddsData] = await Promise.all([fetchEvents(), fetchOdds()]);
+                if (events && oddsData) {
+                    renderEvents(events, oddsData);
+                } else {
+                    document.getElementById('events-container').textContent = 'Failed to load events or odds data.';
+                }
+            } catch (error) {
+                document.getElementById('events-container').textContent = 'An error occurred while loading data.';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</head>
+<body>
+    <h1>/BetSync/</h1>
+    <p class="intro-text">
+        BetSync, your premier platform for comprehensive Premier League odds and event information.
+    </p>
+
+    <br><br>
+
+    <div id="events-container">Loading events...</div>
+</body>
+</html>

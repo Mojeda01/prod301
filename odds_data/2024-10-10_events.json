@@ -1,0 +1,162 @@
+[
+    {
+        "id": "152454388558d4d22919ced2caec0328",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-19T11:30:00Z",
+        "home_team": "Tottenham Hotspur",
+        "away_team": "West Ham United"
+    },
+    {
+        "id": "a4e8419fd4879d3e019537cda13eb112",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-19T14:00:00Z",
+        "home_team": "Fulham",
+        "away_team": "Aston Villa"
+    },
+    {
+        "id": "eea597a56523ff47b477a010be877d10",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-19T14:00:00Z",
+        "home_team": "Manchester United",
+        "away_team": "Brentford"
+    },
+    {
+        "id": "68bce59e24be5258b1b2df67a493a645",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-19T14:00:00Z",
+        "home_team": "Newcastle United",
+        "away_team": "Brighton and Hove Albion"
+    },
+    {
+        "id": "8ce9b5592cdbaeb5ff968d9ddba9ef82",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-19T14:00:00Z",
+        "home_team": "Ipswich Town",
+        "away_team": "Everton"
+    },
+    {
+        "id": "c3061e04525322b1951e60e3470918cb",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-19T14:00:00Z",
+        "home_team": "Southampton",
+        "away_team": "Leicester City"
+    },
+    {
+        "id": "884831a9a65c77daa2eb8adaaf5c357e",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-19T16:30:00Z",
+        "home_team": "Bournemouth",
+        "away_team": "Arsenal"
+    },
+    {
+        "id": "08a9e3241c27d9fbb3aa3f1950527c63",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-20T13:00:00Z",
+        "home_team": "Wolverhampton Wanderers",
+        "away_team": "Manchester City"
+    },
+    {
+        "id": "00351878709543ad15bbba4b7a2062a1",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-20T15:30:00Z",
+        "home_team": "Liverpool",
+        "away_team": "Chelsea"
+    },
+    {
+        "id": "4103fe10dc7d21ffe77840763a7e1437",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-21T19:00:00Z",
+        "home_team": "Nottingham Forest",
+        "away_team": "Crystal Palace"
+    },
+    {
+        "id": "b52655dd4e42aacd0e7281126f97b437",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-25T19:00:00Z",
+        "home_team": "Leicester City",
+        "away_team": "Nottingham Forest"
+    },
+    {
+        "id": "9f953baba94a3b1a1a2130721282c1f9",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-26T14:00:00Z",
+        "home_team": "Aston Villa",
+        "away_team": "Bournemouth"
+    },
+    {
+        "id": "b747c3c47308ae5f4cf873ee949429d8",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-26T14:00:00Z",
+        "home_team": "Brentford",
+        "away_team": "Ipswich Town"
+    },
+    {
+        "id": "99377c860d2ca3db23f315baa50b6645",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-26T14:00:00Z",
+        "home_team": "Brighton and Hove Albion",
+        "away_team": "Wolverhampton Wanderers"
+    },
+    {
+        "id": "9427f05d52b3b209f92f465b6acda0d1",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-26T14:00:00Z",
+        "home_team": "Manchester City",
+        "away_team": "Southampton"
+    },
+    {
+        "id": "57088f84741fcdb1b535d5d58bab1bb9",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-26T16:30:00Z",
+        "home_team": "Everton",
+        "away_team": "Fulham"
+    },
+    {
+        "id": "2401c741d8e0baa12b4515d8e862b13e",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-27T14:00:00Z",
+        "home_team": "Chelsea",
+        "away_team": "Newcastle United"
+    },
+    {
+        "id": "c2761741debb204bd9b3d442213fcbeb",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-27T14:00:00Z",
+        "home_team": "Crystal Palace",
+        "away_team": "Tottenham Hotspur"
+    },
+    {
+        "id": "177e106890b6c236f474e390f20ee4f6",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-27T14:00:00Z",
+        "home_team": "West Ham United",
+        "away_team": "Manchester United"
+    },
+    {
+        "id": "d3ace84aee8238229b71e41886d03e6c",
+        "sport_key": "soccer_epl",
+        "sport_title": "EPL",
+        "commence_time": "2024-10-27T16:30:00Z",
+        "home_team": "Arsenal",
+        "away_team": "Liverpool"
+    }
+]
