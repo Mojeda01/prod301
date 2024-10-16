@@ -142,25 +142,16 @@
                 });
         }
 
-        async function fetchEvents() {
-            return fetch('/events')
-                .then(response => response.json())
-                .catch(error => {
-                    console.error('Failed to load events:', error);
-                    document.getElementById('events-container').textContent = 'Failed to load events.';
-                });
-        }
-
-        function renderEvents(events, oddsData) {
+        function renderOdds(oddsData) {
             const eventsContainer = document.getElementById('events-container');
             eventsContainer.innerHTML = '';
 
-            if (!events || !oddsData) {
-                eventsContainer.textContent = 'Failed to load events or odds data.';
+            if (!oddsData || oddsData.length === 0) {
+                eventsContainer.textContent = 'No odds data available.';
                 return;
             }
 
-            events.forEach(event => {
+            oddsData.forEach(event => {
                 const eventDiv = document.createElement('div');
                 eventDiv.classList.add('event');
 
@@ -186,9 +177,8 @@
                 table.appendChild(thead);
 
                 const tbody = document.createElement('tbody');
-                const matchingOdds = oddsData.find(oddsEvent => oddsEvent.home_team === event.home_team && oddsEvent.away_team === event.away_team);
-                if (matchingOdds && matchingOdds.bookmakers) {
-                    matchingOdds.bookmakers.forEach(bookmaker => {
+                if (event.bookmakers) {
+                    event.bookmakers.forEach(bookmaker => {
                         bookmaker.markets.forEach(market => {
                             if (market.key === 'h2h') {
                                 const tr = document.createElement('tr');
@@ -212,81 +202,6 @@
                 }
                 table.appendChild(tbody);
                 eventContent.appendChild(table);
-
-                // Add totals section
-                const totalsSection = document.createElement('div');
-                totalsSection.innerHTML = `<h4>Totals</h4>`;
-                const totalsTable = document.createElement('table');
-                const totalsThead = document.createElement('thead');
-                totalsThead.innerHTML = `
-                    <tr>
-                        <th>Bookmaker</th>
-                        <th>Over</th>
-                        <th>Under</th>
-                    </tr>
-                `;
-                totalsTable.appendChild(totalsThead);
-
-                const totalsTbody = document.createElement('tbody');
-                if (matchingOdds && matchingOdds.bookmakers) {
-                    matchingOdds.bookmakers.forEach(bookmaker => {
-                        bookmaker.markets.forEach(market => {
-                            if (market.key === 'totals') {
-                                const overOdds = market.outcomes.find(outcome => outcome.name === 'Over')?.price || '-';
-                                const underOdds = market.outcomes.find(outcome => outcome.name === 'Under')?.price || '-';
-                                const tr = document.createElement('tr');
-                                tr.innerHTML = `
-                                    <td>${bookmaker.title}</td>
-                                    <td>${overOdds}</td>
-                                    <td>${underOdds}</td>
-                                `;
-                                totalsTbody.appendChild(tr);
-                            }
-                        });
-                    });
-                }
-                totalsTable.appendChild(totalsTbody);
-                totalsSection.appendChild(totalsTable);
-                eventContent.appendChild(totalsSection);
-
-                // Add spreads section
-                const spreadsSection = document.createElement('div');
-                spreadsSection.innerHTML = `<h4>Spreads</h4>`;
-                const spreadsTable = document.createElement('table');
-                const spreadsThead = document.createElement('thead');
-                spreadsThead.innerHTML = `
-                    <tr>
-                        <th>Bookmaker</th>
-                        <th>Team</th>
-                        <th>Price</th>
-                        <th>Point</th>
-                    </tr>
-                `;
-                spreadsTable.appendChild(spreadsThead);
-
-                const spreadsTbody = document.createElement('tbody');
-                if (matchingOdds && matchingOdds.bookmakers) {
-                    matchingOdds.bookmakers.forEach(bookmaker => {
-                        bookmaker.markets.forEach(market => {
-                            if (market.key === 'spreads') {
-                                market.outcomes.forEach(outcome => {
-                                    const tr = document.createElement('tr');
-                                    tr.innerHTML = `
-                                        <td>${bookmaker.title}</td>
-                                        <td>${outcome.name}</td>
-                                        <td>${outcome.price}</td>
-                                        <td>${outcome.point}</td>
-                                    `;
-                                    spreadsTbody.appendChild(tr);
-                                });
-                            }
-                        });
-                    });
-                }
-                spreadsTable.appendChild(spreadsTbody);
-                spreadsSection.appendChild(spreadsTable);
-                eventContent.appendChild(spreadsSection);
-
                 eventDiv.appendChild(eventContent);
                 eventsContainer.appendChild(eventDiv);
             });
@@ -294,11 +209,11 @@
 
         async function loadData() {
             try {
-                const [events, oddsData] = await Promise.all([fetchEvents(), fetchOdds()]);
-                if (events && oddsData) {
-                    renderEvents(events, oddsData);
+                const oddsData = await fetchOdds();
+                if (oddsData) {
+                    renderOdds(oddsData);
                 } else {
-                    document.getElementById('events-container').textContent = 'Failed to load events or odds data.';
+                    document.getElementById('events-container').textContent = 'Failed to load odds data.';
                 }
             } catch (error) {
                 document.getElementById('events-container').textContent = 'An error occurred while loading data.';
@@ -316,6 +231,6 @@
 
     <br><br>
 
-    <div id="events-container">Loading events...</div>
+    <div id="events-container">Loading odds...</div>
 </body>
 </html>
