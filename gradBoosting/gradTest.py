@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import log_loss, accuracy_score
 import xgboost as xgb
 import matplotlib.pyplot as plt
+import commence_matcher
 
 
 def GradBoosted():
@@ -157,8 +158,6 @@ def GradBoosted():
         return (row['model_prob'] * row['home_team_price']) - (1 - row['model_prob'])
     
     X_test['expected_value'] = X_test.apply(calculate_expected_value, axis=1)
-    print("Expected value for each Bet:")
-    print(X_test[['home_team_price', 'away_team_price', 'model_prob', 'expected_value']])
 
     def scatter_plot():
         # Visualize value bets vs. Non-value bets
@@ -180,8 +179,6 @@ def GradBoosted():
         plt.show()
 
     high_ev_bets = X_test[X_test['expected_value'] > 1.0] # Bets wth high expected value
-    print("High Expected Value Bets:")
-    print(high_ev_bets[['home_team_price', 'away_team_price', 'model_prob', 'expected_value']])
 
     ### DATASET OUTPUT - for HIGH EV BETS
     # Convert high_ev_bets to a dictionary format
@@ -233,6 +230,6 @@ def GradBoosted():
     
     update_highEVbetsData() # running the function
 
-
-
-GradBoosted()
+GradBoosted() # First run the gradboosted model
+matchAlgo_highEVbets = commence_matcher.matchingModel() # Secondly merge the commence times of the match to the updated expected values.
+matchAlgo_rankedPred = commence_matcher.matchRankedPred()
