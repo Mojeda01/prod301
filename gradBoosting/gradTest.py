@@ -10,6 +10,95 @@ from sklearn.metrics import log_loss, accuracy_score
 import xgboost as xgb
 import matplotlib.pyplot as plt
 
+# Optimal bet function
+def optimal_bet():
+    # Load high_ev_bets_updated.json
+    with open('high_ev_bets_updated.json', 'r') as f:
+        high_ev_bets = json.load(f)
+    # Load odds_data
+    with open('odds_data.json', 'r') as f1:
+        odds_data = json.load(f1)
+
+    # Extracting the relevant data
+    implied_prob_home = [bet['implied_prob_home'] for bet in high_ev_bets]
+    implied_prob_away = [bet['implied_prob_away'] for bet in high_ev_bets]
+    expected_values = [bet['expected_value'] for bet in high_ev_bets]
+
+    # Combine home and away implied probabilities and corresponding expected values
+    implied_probabilities = implied_prob_home + implied_prob_away
+    expected_values_combined = expected_values * 2 # Because we combine both home and away bets
+
+    # Convert lists to numpy arrays for analysis
+    implied_probabilities = np.array(implied_probabilities)
+    expected_values_combined = np.array(expected_values_combined)
+
+    # Perform a polynomial fit (degree 2) to find the optimal point (maximum) of the curve
+    coefficients = np.polyfit(implied_probabilities, expected_values_combined, 2)
+    polynomial = np.poly1d(coefficients)
+
+    # Find the vertex of the parabola (the maximum point of the exepcted value curve)
+    optimal_probability = -coefficients[1] / (2 * coefficients[0])
+    optimal_expected_value = polynomial(optimal_probability)    
+
+    def figure():
+        # Plotting the curve with the optimal point
+        implied_prob_range = np.linspace(0, 1, 100)
+        expected_value_fitted = polynomial(implied_prob_range)
+
+        plt.figure(figsize=(10,6))
+        plt.plot(implied_probabilities, expected_values_combined, 'o',label='Data Points')
+        plt.plot(implied_prob_range, expected_value_fitted, '-', label='Fitted Curve')
+        plt.plot(optimal_probability, optimal_expected_value, 'ro', 
+                 label=f'Optimal Point: {optimal_probability:.2f}, {optimal_expected_value:.2f}')
+        plt.title('Implied Probability vs Expected Value with Optimal Bet Point')
+        plt.xlabel('Implied Probability')
+        plt.ylabel('Expected Value')
+        plt.legend()
+        plt.grid(True)
+
+        # Show the plot
+        plt.show()
+
+    # Matching the optimal probability with match infor from odds_data.json
+    def find_closest_match(optimal_probability, odds_data):
+        closest_match = None
+        smallest_diff = float('inf')
+        
+        for match in odds_data:
+            for bookmaker in match['bookmakers']:
+                for market in bookmaker['markets']:
+                    if market['key'] == 'h2h': # Only interested in H2H market
+                        for outcome in market['outcomes']:
+                            # Calculate the implied probability from odds
+                            implied_prob = 1 / outcome['price']
+                            diff =abs(implied_prob - optimal_probability)
+
+                            if diff < smallest_diff:
+                                smallest_diff = diff 
+                                closest_match = {
+                                    'home_team': match['home_team'],
+                                    'away_team': match['away_team'],
+                                    'bookmaker': bookmaker['title'],
+                                    'implied_probability': implied_prob,
+                                    'odds': outcome['price'],
+                                    'commence_time': match['commence_time']
+                                }
+            if closest_match:
+                break # Break out once the closest match is found                    
+        
+        # Write to a .CSV file
+        with open('optimal_bet.json', 'w') as outfile:
+            json.dump({
+                'Optimal Probability' : round(optimal_probability, 4),
+                'Optimal Expected Value': round(optimal_expected_value, 4),
+                'Closest Match': closest_match 
+            }, outfile,indent=4)
+
+        return closest_match
+    
+    find_closest_match(optimal_probability, odds_data)
+    print("[OPTIMAL BET WRITTEN OUT TO optimal_bet.json]")
+
 # the matching model for matching high expected value bets with match commence times.
 def matchingModel():
     # Load high EV bets and odds data
@@ -325,3 +414,4 @@ def GradBoosted():
 GradBoosted() # First run the gradboosted model
 matchAlgo_highEVbets = matchingModel() # Secondly merge the commence times of the match to the updated expected values.
 matchAlgo_rankedPred = matchRankedPred() # Match the commence and matches with the ranked predictions.
+getOptimalBetModel = optimal_bet() # Uses the optimal_bet() to calculate the most optimal
