@@ -9,7 +9,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import log_loss, accuracy_score
 import xgboost as xgb
 import matplotlib.pyplot as plt
+import getData
+from datetime import datetime
 
+# 4. function
 # Optimal bet function
 def optimal_bet():
     # Load high_ev_bets_updated.json
@@ -99,6 +102,7 @@ def optimal_bet():
     find_closest_match(optimal_probability, odds_data)
     print("[OPTIMAL BET WRITTEN OUT TO optimal_bet.json]")
 
+# 2. function
 # the matching model for matching high expected value bets with match commence times.
 def matchingModel():
     # Load high EV bets and odds data
@@ -136,6 +140,7 @@ def matchingModel():
     
     print("[<3] high_ev_bets_updated.json successfully updated with commence_time")
 
+# 3. function
 # Small model for matching the commence times with the ranked predictions dataset.
 def matchRankedPred():
     # Load the rank predictions, high EV bets, and odds data
@@ -193,9 +198,13 @@ def matchRankedPred():
     
     print("rank_predictions.json successfully updated with match info.")
 
+# 1. First function
 def GradBoosted():
+    # Get the latest .json file from ../odds_data directory
+    latest_json_file_name = getData.get_latest_odds_file('../odds_data')
+    actual_latest_json_file = '../odds_data/'+latest_json_file_name
     # Load the dataset from the odds_data.json file
-    with open('odds_data.json') as f:
+    with open(actual_latest_json_file) as f:
         odds_data = json.load(f)
     
     # Extract relevant information from the JSON data
@@ -325,7 +334,8 @@ def GradBoosted():
 
     # WRITE OUT THE DATA .json file
     # Define the path and name of the output file
-    output_file_path = "rank_predictions.json"
+    current_time = datetime.now().strftime('%Y-%m-%d-%H_%M')
+    output_file_path = f"gradData/{current_time}_rank_predictions.json"
 
     # Write the data to a JSON file
     with open(output_file_path, 'w') as file:
@@ -364,14 +374,15 @@ def GradBoosted():
     ### DATASET OUTPUT - for HIGH EV BETS
     # Convert high_ev_bets to a dictionary format
     high_ev_bets_dict = high_ev_bets.to_dict(orient='records')
-    with open('high_ev_bets.json', 'w') as json_file:
+    high_output_file = f'gradData/{current_time}_high_ev_bets.json'
+    with open(high_output_file, 'w') as json_file:
         json.dump(high_ev_bets_dict, json_file, indent=4)
     
-    print("[+++] HIGH EV bets have been saved to high_ev_bets.json [BEFORE MATCHING]")
+    print(f"[+++] UPDATED: [{high_output_file}]")
 
     def update_highEVbetsData():
         # Load the odds dataa
-        with open('odds_data.json') as f:
+        with open(actual_latest_json_file) as f:
             odds_data = json.load(f)
         
         # Load high_ev_bets
@@ -404,14 +415,15 @@ def GradBoosted():
                 bet.update(match_info)
         
         # Save updated high_ev_bets
-        with open('high_ev_bets_updated.json', 'w') as f:
+        updated_highEv_bets = f'gradData/{current_time}_high_ev_bets_updated.json'
+        with open(updated_highEv_bets, 'w') as f:
             json.dump(high_ev_bets, f, indent=4)
         
-        print("[+++] Updated high_ev_bets.json with match information saved to high_ev_bets_updated.json")
+        print(f"[+++] UPDATE WORKED: {updated_highEv_bets} ")
     
     update_highEVbetsData() # running the function
 
 GradBoosted() # First run the gradboosted model
-matchAlgo_highEVbets = matchingModel() # Secondly merge the commence times of the match to the updated expected values.
-matchAlgo_rankedPred = matchRankedPred() # Match the commence and matches with the ranked predictions.
-getOptimalBetModel = optimal_bet() # Uses the optimal_bet() to calculate the most optimal
+#matchAlgo_highEVbets = matchingModel() # Secondly merge the commence times of the match to the updated expected values.
+#matchAlgo_rankedPred = matchRankedPred() # Match the commence and matches with the ranked predictions.
+#getOptimalBetModel = optimal_bet() # Uses the optimal_bet() to calculate the most optimal
