@@ -9,17 +9,23 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import log_loss, accuracy_score
 import xgboost as xgb
 import matplotlib.pyplot as plt
-import getData
 from datetime import datetime
+import getFile
+
+# Just adding this, because I need to use directory a lot
+odds_data_dir = '../odds_data/'
 
 # 4. function
 # Optimal bet function
 def optimal_bet():
     # Load high_ev_bets_updated.json
-    with open('high_ev_bets_updated.json', 'r') as f:
+    lhebu_dir = 'gradData/high_ev_bets_updated/'
+    latest_high_ev_bets_updated = lhebu_dir + getFile.get_latest_creation_date_file('gradData/high_ev_bets_updated/')
+    with open(latest_high_ev_bets_updated, 'r') as f:
         high_ev_bets = json.load(f)
     # Load odds_data
-    with open('odds_data.json', 'r') as f1:
+    latest_odds_data = odds_data_dir + getFile.get_latest_creation_date_file('../odds_data/')
+    with open(latest_odds_data, 'r') as f1:
         odds_data = json.load(f1)
 
     # Extracting the relevant data
@@ -89,27 +95,34 @@ def optimal_bet():
             if closest_match:
                 break # Break out once the closest match is found                    
         
+        optimal_bet_dir = 'gradData/optimal_bet/'
+        current_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        optimal_bet_filename = optimal_bet_dir + current_date + '.json'
         # Write to a .CSV file
-        with open('optimal_bet.json', 'w') as outfile:
+        with open(optimal_bet_filename, 'w') as outfile:
             json.dump({
                 'Optimal Probability' : round(optimal_probability, 4),
                 'Optimal Expected Value': round(optimal_expected_value, 4),
                 'Closest Match': closest_match 
             }, outfile,indent=4)
+        
+        print(f"[UPDATED]:{optimal_bet_filename}")
 
         return closest_match
     
     find_closest_match(optimal_probability, odds_data)
-    print("[OPTIMAL BET WRITTEN OUT TO optimal_bet.json]")
 
 # 2. function
 # the matching model for matching high expected value bets with match commence times.
 def matchingModel():
     # Load high EV bets and odds data
-    with open('high_ev_bets_updated.json', 'r') as f:
+    high_ev_bets_updated_DIR = 'gradData/high_ev_bets_updated/'
+    latest_high_ev_bets_updated = high_ev_bets_updated_DIR + getFile.get_latest_creation_date_file('gradData/high_ev_bets_updated/')
+    with open(latest_high_ev_bets_updated, 'r') as f:
         high_ev_bets = json.load(f)
     
-    with open ('odds_data.json', 'r') as f:
+    latest_odds_data = odds_data_dir + getFile.get_latest_creation_date_file('../odds_data/')
+    with open (latest_odds_data, 'r') as f:
         odds_data = json.load(f)
 
     # Create a mapping for commence_time based on teams
@@ -135,22 +148,30 @@ def matchingModel():
             bet['commence_time'] = 'Unknown' # In case a match is not found.
     
     # Save the updated high EV bets back to the original file
-    with open('high_ev_bets_updated.json', 'w') as f:
+    high_ev_bets_updated_dir = 'gradData/high_ev_bets_updated/'
+    current_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    high_ev_bets_updated_name = high_ev_bets_updated_dir + current_date + '.json'
+    with open(high_ev_bets_updated_name, 'w') as f:
         json.dump(high_ev_bets, f, indent=4)
     
-    print("[<3] high_ev_bets_updated.json successfully updated with commence_time")
+    print(f"[UPDATED]:{high_ev_bets_updated_name}")
 
 # 3. function
 # Small model for matching the commence times with the ranked predictions dataset.
 def matchRankedPred():
     # Load the rank predictions, high EV bets, and odds data
-    with open('rank_predictions.json', 'r') as f:
+    lrp_dir = 'gradData/rank_predictions/'
+    latest_rank_predictions = lrp_dir + getFile.get_latest_creation_date_file('gradData/rank_predictions/')
+    with open(latest_rank_predictions, 'r') as f:
         rank_predictions = json.load(f)
     
-    with open('high_ev_bets_updated.json', 'r') as f:
+    lhebu_dir = 'gradData/high_ev_bets_updated/'
+    latest_high_ev_bets_updated = lhebu_dir + getFile.get_latest_creation_date_file('gradData/high_ev_bets_updated/')
+    with open(latest_high_ev_bets_updated, 'r') as f:
         high_ev_bets = json.load(f)
 
-    with open('odds_data.json', 'r') as f:
+    latest_odds_data = odds_data_dir + getFile.get_latest_creation_date_file('../odds_data/')
+    with open(latest_odds_data, 'r') as f:
         odds_data = json.load(f)
 
     # Create a mapping of commence_time and teams from odds_data.json
@@ -192,19 +213,20 @@ def matchRankedPred():
                 })
     # Save the updated rank predictions back to the same file
     rank_predictions['rank_predictions'] = updated_rank_predictions
-
-    with open('rank_predictions.json', 'w') as f:
+    
+    rank_predictions_dir = 'gradData/rank_predictions/'
+    currrent_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    rank_predictions_filename = rank_predictions_dir + currrent_date + '.json'
+    with open(rank_predictions_filename, 'w') as f:
         json.dump(rank_predictions, f, indent=4)
     
-    print("rank_predictions.json successfully updated with match info.")
+    print(f"[UPDATED]:{rank_predictions_filename}")
 
 # 1. First function
 def GradBoosted():
-    # Get the latest .json file from ../odds_data directory
-    latest_json_file_name = getData.get_latest_odds_file('../odds_data')
-    actual_latest_json_file = '../odds_data/'+latest_json_file_name
     # Load the dataset from the odds_data.json file
-    with open(actual_latest_json_file) as f:
+    latest_oddsFile = odds_data_dir + getFile.get_latest_creation_date_file('../odds_data/')
+    with open(latest_oddsFile) as f:
         odds_data = json.load(f)
     
     # Extract relevant information from the JSON data
@@ -334,14 +356,15 @@ def GradBoosted():
 
     # WRITE OUT THE DATA .json file
     # Define the path and name of the output file
-    current_time = datetime.now().strftime('%Y-%m-%d-%H_%M')
-    output_file_path = f"gradData/{current_time}_rank_predictions.json"
+    rank_predictions_dir = 'gradData/rank_predictions/'
+    new_date = datetime.now().strftime('%Y-%m-%d-%H_%M')
+    output_file_path = rank_predictions_dir + new_date + '.json'
 
     # Write the data to a JSON file
     with open(output_file_path, 'w') as file:
         json.dump(data_to_write, file, indent=4)
 
-    print(f"Data written to {output_file_path}")
+    print(f"[UPDATED]: {output_file_path}")
 
     # EXTRA FUNCTIONALITY: INTERPRETATION AND VISUALIZATION
     # 1. Calculate Expected Value (EV) for Each bet 
@@ -374,19 +397,25 @@ def GradBoosted():
     ### DATASET OUTPUT - for HIGH EV BETS
     # Convert high_ev_bets to a dictionary format
     high_ev_bets_dict = high_ev_bets.to_dict(orient='records')
-    high_output_file = f'gradData/{current_time}_high_ev_bets.json'
-    with open(high_output_file, 'w') as json_file:
+    current_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    high_ev_bets_dir = 'gradData/high_ev_bets/'
+    filename_high_ev_bets = high_ev_bets_dir + current_date + '.json'
+    with open(filename_high_ev_bets, 'w') as json_file:
         json.dump(high_ev_bets_dict, json_file, indent=4)
     
-    print(f"[+++] UPDATED: [{high_output_file}]")
+    print(f"[UPDATED HIGH_EV_BETS]: {filename_high_ev_bets}")
 
     def update_highEVbetsData():
-        # Load the odds dataa
-        with open(actual_latest_json_file) as f:
+        # Load the odds data
+        with open(latest_oddsFile) as f:
             odds_data = json.load(f)
         
         # Load high_ev_bets
-        with open('high_ev_bets.json') as f:
+        latest_high_ev_bets = getFile.get_latest_creation_date_file('gradData/high_ev_bets/')
+        # Ensure the full path is used
+        high_ev_dir = 'gradData/high_ev_bets/'
+        latest_high_ev_bets_path = high_ev_bets_dir + latest_high_ev_bets
+        with open(latest_high_ev_bets_path) as f:
             high_ev_bets = json.load(f)
         
         # Create a mapping from home and away prices to match information
@@ -415,15 +444,17 @@ def GradBoosted():
                 bet.update(match_info)
         
         # Save updated high_ev_bets
-        updated_highEv_bets = f'gradData/{current_time}_high_ev_bets_updated.json'
-        with open(updated_highEv_bets, 'w') as f:
+        high_ev_bets_updated_dir = 'gradData/high_ev_bets_updated/'
+        high_ev_bets_updated_name = high_ev_bets_updated_dir + current_date + '.json'
+        with open(high_ev_bets_updated_name, 'w') as f:
             json.dump(high_ev_bets, f, indent=4)
         
-        print(f"[+++] UPDATE WORKED: {updated_highEv_bets} ")
+        print(f"[UPDATED]: {high_ev_bets_updated_name}")
     
     update_highEVbetsData() # running the function
 
 GradBoosted() # First run the gradboosted model
-#matchAlgo_highEVbets = matchingModel() # Secondly merge the commence times of the match to the updated expected values.
-#matchAlgo_rankedPred = matchRankedPred() # Match the commence and matches with the ranked predictions.
-#getOptimalBetModel = optimal_bet() # Uses the optimal_bet() to calculate the most optimal
+matchAlgo_highEVbets = matchingModel() # Secondly merge the commence times of the match to the updated expected values.
+matchAlgo_rankedPred = matchRankedPred() # Match the commence and matches with the ranked predictions.
+getOptimalBetModel = optimal_bet() # Uses the optimal_bet() to calculate the most optimal
+
