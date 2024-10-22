@@ -1,0 +1,88 @@
+h1{
+    text-align: center;
+}
+
+body{
+    font-family: 'JetBrains Mono', monospace;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container{
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+h2{
+    color: #2c3e50;
+}
+
+h2, th{
+    color: #333; /* Update the header color for both table headers and titles */
+
+}
+
+.data-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.data-table th, .data-table td{
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.data-table th{
+    background-color: 2c3e50;
+    color: #333;
+}
+
+.optimal-bet-card{
+    background-color: #b1ffb9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.optimal-bet-card h3{
+    color: #2c3e50;
+}
+
+.optimal-bet-card p{
+    margin: 5px 0;
+    font-size: 0.9em;
+}
+
+.nav-button{
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: background-color 0.3s ease, box-shadow 0.3 ease;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-button:hover{
+    background-color: #45a049;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.button-container{
+    text-align: center;
+    margin: 20px;
+}

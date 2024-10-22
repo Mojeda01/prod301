@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>betRanker</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1 style="font-family: 'JetBrains Mono', sans-serif;">BetRanker</h1>
+        <div class="button-container">
+            <a href="/" class="nav-button">Go to BetSync</a>
+        </div>
+    </header>
+
+    <!--Optimal bet data display-->
+    <div class="container">
+        <h2>Optimal Bet</h2>
+        <div class="optimal-bet-card">
+            <h3>Closest Match</h3>
+            <p>Away Team: {{ optimal_bet_data['Closest Match'].away_team }}</p>
+            <p>Bookmaker: {{ optimal_bet_data['Closest Match'].bookmaker }}</p>
+            <p>Commence Time: {{ optimal_bet_data['Closest Match'].commence_time }}</p>
+            <p>Home Team: {{ optimal_bet_data['Closest Match'].home_team }}</p>
+            <p>Odds: {{ optimal_bet_data['Closest Match'].odds }}</p>
+            <p>Implied Probability: {{ optimal_bet_data['Closest Match'].implied_probability }}</p>
+            <hr>
+            <p><strong>Optimal Expected Value:</strong> {{ optimal_bet_data['Optimal Expected Value'] }}</p>
+            <p><strong>Optimal Probability:</strong> {{ optimal_bet_data['Optimal Probability'] }}</p>
+        </div>
+    </div>
+    
+
+    <!--High-ev Bets Data display-->
+    <div class="container">
+        <h2>High EV Bets</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Away Team</th>
+                    <th>Away Price</th>
+                    <th>Bookmaker</th>
+                    <th>Commence Time</th>
+                    <th>Expected Value</th>
+                    <th>Home Team</th>
+                    <th>Home Price</th>
+                    <th>Implied Prob (Away)</th>
+                    <th>Implied Prob (Home)</th>
+                    <th>Model Prob</th>
+                    <th>Value Bet</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bet in high_ev_bets_data %}
+                <tr>
+                    <td>{{ bet.away_team  }}</td>
+                    <td>{{ bet.away_team_price  }}</td>
+                    <td>{{ bet.bookmaker  }}</td>
+                    <td>{{ bet.commence_time  }}</td>
+                    <td>{{ bet.expected_value  }}</td>
+                    <td>{{ bet.home_team  }}</td>
+                    <td>{{ bet.home_team_price  }}</td>
+                    <td>{{ bet.implied_prob_away  }}</td>
+                    <td>{{ bet.implied_prob_home  }}</td>
+                    <td>{{ bet.model_prob  }}</td>
+                    <td>{{ bet.value_bet  }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

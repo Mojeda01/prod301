@@ -123,14 +123,41 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
-            .intro-text {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-            line-height: 1.6;
-            font-size: 1.1em;
-            color: #555;
+        .intro-text {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        line-height: 1.6;
+        font-size: 1.1em;
+        color: #555;  
         }
+
+        .nav-button{
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover{
+            background-color: #45a049;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .button-container{
+            text-align: center;
+            margin-top: 20px;
+        }
+
     </style>
     <script>
         async function fetchOdds() {
@@ -228,6 +255,10 @@
     <p class="intro-text">
         BetSync, your premier platform for comprehensive Premier League odds and event information.
     </p>
+
+    <div class="button-container">
+        <a href="/betRanker" class="nav-button">Go to BetRanker</a>
+    </div>
 
     <br><br>
 
