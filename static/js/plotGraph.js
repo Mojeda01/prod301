@@ -21,10 +21,23 @@ document.addEventListener('DOMContentLoaded', function () {
                         return;
                     }
                     
-                    // Find the index of the optimal bet
-                    const optimalIndex = impliedProbs.findIndex(prob => 
-                        prob === optimalData['Closest Match'].implied_probability
+                    // Locate the same match in the high_ev_bets data
+                    const optimalMatch = optimalData['Closest Match'];
+                    const optimalBet = data.find(entry => 
+                        entry.home_team === optimalMatch.home_team &&
+                        entry.away_team === optimalMatch.away_team &&
+                        entry.commence_time === optimalMatch.commence_time
                     );
+
+                    if (!optimalBet) {
+                        console.error("Optimal bet match not found in high_ev_bets data.");
+                        return;
+                    }
+
+                    const optimalPoint = {
+                        x: optimalBet.implied_prob_home || optimalBet.implied_prob_away,
+                        y: optimalBet.expected_value
+                    };
 
                     // Create the scatter plot graph using Chart.js
                     const ctx = document.getElementById('evImpliedGraph').getContext('2d');
@@ -36,13 +49,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                 data: impliedProbs.map((prob, index) => ({
                                     x: prob,
                                     y: expectedValues[index]
-                                })),
+                                })).concat(optimalPoint),
                                 backgroundColor: impliedProbs.map((_, index) =>
-                                    index === optimalIndex ? 'red' : 'rgba(0, 123, 255, 0.7)'
-                                ),
+                                    impliedProbs[index] === optimalPoint.x && expectedValues[index] === optimalPoint.y ? 'red' : 'rgba(0, 123, 255, 0.7)'
+                                ).concat('red'),
                                 pointRadius: impliedProbs.map((_, index) =>
-                                    index === optimalIndex ? 8 : 5
-                                ),
+                                    impliedProbs[index] === optimalPoint.x && expectedValues[index] === optimalPoint.y ? 8 : 5
+                                ).concat(8),
                             }]
                         },
                         options: {
