@@ -6,10 +6,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>betRanker</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/plotGraph.js') }}"></script>
 </head>
 <body>
     <header>
-        <h1 style="font-family: 'JetBrains Mono', sans-serif;">BetRanker</h1>
+        <h1 style="font-family: 'JetBrains Mono', sans-serif;">BetOptimal</h1>
         <div class="button-container">
             <a href="/" class="nav-button">Go to BetSync</a>
         </div>
@@ -29,9 +31,13 @@
             <hr>
             <p><strong>Optimal Expected Value:</strong> {{ optimal_bet_data['Optimal Expected Value'] }}</p>
             <p><strong>Optimal Probability:</strong> {{ optimal_bet_data['Optimal Probability'] }}</p>
+            <div class="graph-container">
+                <canvas id="evImpliedGraph" width="200" height="200"></canvas>
+            </div>
         </div>
     </div>
     
+        
 
     <!--High-ev Bets Data display-->
     <div class="container">
@@ -66,6 +72,31 @@
                     <td>{{ bet.implied_prob_home  }}</td>
                     <td>{{ bet.model_prob  }}</td>
                     <td>{{ bet.value_bet  }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ranked Predictions Display -->
+    <div class="container">
+        <h2>Ranked Predictions</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Home Team</th>
+                    <th>Away Team</th>
+                    <th>Commence Time</th>
+                    <th>Prediction Rank</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prediction in ranked_predictions_data.rank_predictions %}
+                <tr>
+                    <td>{{ prediction.home_team }}</td>
+                    <td>{{ prediction.away_team }}</td>
+                    <td>{{ prediction.commence_time }}</td>
+                    <td>{{ prediction.rank_prediction }}</td> 
                 </tr>
                 {% endfor %}
             </tbody>

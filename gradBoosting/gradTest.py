@@ -198,7 +198,7 @@ def matchRankedPred():
             if key in commence_time_mapping:
                 match_info = commence_time_mapping[key]
                 updated_rank_predictions.append({
-                    'rank_predictiopn': prediction,
+                    'rank_prediction': prediction,
                     'home_team': match_info['home_team'],
                     'away_team': match_info['away_team'],
                     'commence_time': match_info['commence_time']
@@ -214,7 +214,7 @@ def matchRankedPred():
     # Save the updated rank predictions back to the same file
     rank_predictions['rank_predictions'] = updated_rank_predictions
     
-    rank_predictions_dir = 'gradData/rank_predictions/'
+    rank_predictions_dir = 'gradData/rank_predictions_updated/'
     currrent_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     rank_predictions_filename = rank_predictions_dir + currrent_date + '.json'
     with open(rank_predictions_filename, 'w') as f:
@@ -331,19 +331,31 @@ def GradBoosted():
     # Predict ranks on the test set
     rank_predictions = ranker.predict(X_rank_test)
 
-    # Print rank predictions to verify
-    print("Rank Predictions:")
-    print(rank_predictions)
-
     # Check if predictions were made
     if rank_predictions is not None and len(rank_predictions) == len(X_rank_test):
-        # Add the predictions to the test dataframe to see how they rank
+        # Create a copy of the test data for ranking purposes 
         X_rank_test = X_rank_test.copy()
-        X_rank_test['rank_prediction'] = rank_predictions
 
-        # Display ranked bets
-        print("Ranked Bets:")
-        print(X_rank_test.sort_values(by='rank_prediction', ascending=False))
+        # Introduce some derived features to add more variability to rank calculations
+        if 'implied_prob' in X_rank_test.columns and 'model_prob' in X_rank_test.columns:
+            # Calculate the difference between the model probability and implied probability 
+            X_rank_test['prob_diff'] = X_rank_test['model_prob'] - X_rank_test['implied_prob']
+
+            # Add this difference to rank predictions to modify the ranks
+            rank_predictions = rank_predictions + X_rank_test['prob_diff']
+        
+        # Scale the rank predictions for better differentiation
+        rank_predictions_scaled = rank_predictions / rank_predictions.max()
+
+        # Add slight random noise for differentiation
+        random_noise = np.random.normal(0, 0.1, len(rank_predictions_scaled))
+        rank_predictions_noisy = rank_predictions_scaled + random_noise
+
+        # Clip the rank predictions to ensure they are within reasonable range
+        rank_predictions_noisy = np.clip(rank_predictions_noisy, -5, 5)
+
+        # Assign the noisy rank predictions back to the data
+        X_rank_test['rank_prediction'] = rank_predictions_noisy
     else:
         print("Rank predictions were not made correctly or the length does not match the test set.")
 
