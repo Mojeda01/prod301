@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>betRanker</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/plotGraph.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/infoPopup.js') }}"></script>
 </head>
 <body>
     <header>
@@ -33,6 +35,45 @@
             <p><strong>Optimal Probability:</strong> {{ optimal_bet_data['Optimal Probability'] }}</p>
             <div class="graph-container">
                 <canvas id="evImpliedGraph" width="200" height="200"></canvas>
+            </div>
+            <div class="info-icon">
+                <i class="fa fa-info-circle"></i>
+                <div class="info-popup">
+                    <p>
+                        <div class="optimal-bet-description">
+                            <h2>Understanding the Optimal Bet - Closest Match Model</h2>
+                            <p>
+                                The Optimal Bet - Closest Match model is designed to identify the best betting opportunity based on a combination of implied probabilities, expected values, and market conditions.
+                            </p>
+                            <h3>How It Works</h3>
+                            <ul>
+                                <li><strong>Closest Match Identification:</strong> The model selects a specific match, labeled as the "Closest Match," which is deemed the optimal choice based on calculated metrics. For example, in the displayed data, the selected match is between <strong>Tottenham Hotspur</strong> and <strong>West Ham United</strong>.</li>
+                                <li><strong>Key Metrics:</strong> The model considers key information such as:
+                                    <ul>
+                                        <li><strong>Away Team:</strong> {{ optimal_bet_data['Closest Match'].away_team }}</li>
+                                        <li><strong>Home Team:</strong> {{ optimal_bet_data['Closest Match'].home_team }}</li>
+                                        <li><strong>Bookmaker:</strong> {{ optimal_bet_data['Closest Match'].bookmaker }}</li>
+                                        <li><strong>Commence Time:</strong> {{ optimal_bet_data['Closest Match'].commence_time }}</li>
+                                        <li><strong>Odds:</strong> {{ optimal_bet_data['Closest Match'].odds }}</li>
+                                        <li><strong>Implied Probability:</strong> {{ optimal_bet_data['Closest Match'].implied_probability }}</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Optimal Values Calculation:</strong> The model computes two main values:
+                                    <ul>
+                                        <li><strong>Optimal Expected Value:</strong> This value, which is calculated as {{ optimal_bet_data['Optimal Expected Value'] }}, indicates the best potential return based on the available odds and implied probability.</li>
+                                        <li><strong>Optimal Probability:</strong> Calculated at {{ optimal_bet_data['Optimal Probability'] }}, it provides a probability assessment of achieving the optimal expected value.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Visualization:</strong> A scatter plot graph illustrates the relationship between Expected Value and Implied Probability for all high-value bets, with the optimal bet marked prominently in red for easy identification.</li>
+                            </ul>
+                            <h3>Summary</h3>
+                            <p>
+                                The Optimal Bet - Closest Match model provides a comprehensive analysis of betting opportunities by calculating and visualizing key metrics, helping bettors make informed decisions based on statistical insights.
+                            </p>
+                        </div>
+                    </p>
+                    <button class="close-btn">Close</button>
+                </div>
             </div>
         </div>
     </div>

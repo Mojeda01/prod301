@@ -86,3 +86,58 @@ h2, th{
     text-align: center;
     margin: 20px;
 }
+
+.info-icon{
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.info-icon i{
+    font-size: 1.2em;
+    color: #007bff; /*Default color for the icon*/
+    transition: transform 0.2s ease, color 0.2s ease; /*Smooth transition*/
+}
+
+.info-icon i:hover{
+    color: #0056b3; /*Slightly darker color on hover*/
+    transform: scale(1.2); /*Slightly increase the size*/
+}
+
+/*Activate or clicked effect for the icon*/
+.info-icon i:active{
+    transform: (1.1); /*Reduce scale slightly on click*/
+    color: #003d80; /*Darker color on click*/
+}
+
+.info-popup{
+    display: none;
+    position: absolute;
+    top: 25px;
+    left: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px; /*Increase padding for better readability*/
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6); /*Slightly increased shadow for emphasis*/
+    z-index: 10;
+    width: 1000px; /*Increase the width for more content space*/
+    max-height: 500px; /*Optional: Add max height to control size*/
+    overflow-y: auto; /*Add scrolling if the content exceeds the max height*/
+}
+
+.info-popup p{
+    margin: 0;
+    font-size: 0.9em;
+    line-height: 1.4em; /*Improved line spacing for better readability*/
+}
+
+.close-btn{
+    display: block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
