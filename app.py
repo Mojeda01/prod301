@@ -5,6 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 from gradBoosting.getFile import get_latest_creation_date_file
 
+
 app = Flask(__name__)
 
 # Utilityt function to fetch latest rank_predictions_updated file
@@ -15,7 +16,7 @@ def fetch_latest_ranked_predictions():
     if not latest_file:
         return None 
     
-    # Load the file content JSON
+    # Load the file content P
     with open(os.path.join(base_dir, latest_file), 'r') as file:
         data = json.load(file) # parse the JSON file 
     return data 
@@ -97,6 +98,16 @@ def odds_endpoint():
         return jsonify(odds_data)
     except Exception as e:
         return jsonify({'error': str(e)})
+
+# LOGIN & REGISTER
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
 # Route to serve the main page
 @app.route('/')
